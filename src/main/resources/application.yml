@@ -1,0 +1,6 @@
+security:
+  authentication:
+    jwt:
+      private-key: "private key"
+      public-key: public key
+      expires-in: 1800000
