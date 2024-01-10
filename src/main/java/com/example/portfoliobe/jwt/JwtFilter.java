@@ -10,7 +10,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-import static org.apache.kafka.common.security.oauthbearer.secured.HttpAccessTokenRetriever.AUTHORIZATION_HEADER;
 
 public class JwtFilter extends GenericFilterBean {
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -20,7 +19,11 @@ public class JwtFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        String jwt = resolveToken(httpServletRequest);
 
+        String signature = jwtUtils.generateSignature(httpServletRequest.getInputStream().readAllBytes(), jwtUtils.getProperties().getPrivateKey());
+        filterChain.doFilter(servletRequest, servletResponse);
     }
     private String resolveToken(HttpServletRequest request){
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
