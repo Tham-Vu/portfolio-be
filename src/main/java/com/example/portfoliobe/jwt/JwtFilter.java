@@ -22,7 +22,6 @@ public class JwtFilter extends GenericFilterBean {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String jwt = resolveToken(httpServletRequest);
 
-        String signature = jwtUtils.generateSignature(httpServletRequest.getInputStream().readAllBytes(), jwtUtils.getProperties().getPrivateKey());
         filterChain.doFilter(servletRequest, servletResponse);
     }
     private String resolveToken(HttpServletRequest request){
