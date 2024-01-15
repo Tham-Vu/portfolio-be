@@ -21,7 +21,6 @@ public class UserJWTController {
     public ResponseEntity<TokenResponse> login(@RequestBody TokenRequest request) throws Exception {
         byte[] requestBytes = convertObjectToBytes(request);
         String jwt = jwtUtils.generateToken();
-        String test = jwtUtils.generateSignature(requestBytes, jwtUtils.getProperties().getPrivateKey());
         return ResponseEntity.ok().body(new TokenResponse("Bear ", jwt, String.valueOf(jwtUtils.getProperties().getExpiresIn())));
     }
     private byte[] convertObjectToBytes(Object object) throws Exception {
