@@ -1,5 +1,6 @@
 package com.example.portfoliobe.rsa;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -50,17 +51,28 @@ public class GenerateSignature {
             throw new RuntimeException(e);
         }
     }
-    public void decrypt(PublicKey publicKey){
+    public void decrypt(PublicKey publicKey, byte[] messageHash){
         try {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
-//            byte[] decryptedMessageHash = cipher.doFinal();
+            byte[] decryptedMessageHash = cipher.doFinal(messageHash);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (NoSuchPaddingException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeyException e) {
             throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
         }
     }
+    public boolean verify(PublicKey publicKey, String message, String signature) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, publicKey);
+//        byte[] decryptedMessageHash = cipher.doFinal();
+        return false;
+    }
+
 }

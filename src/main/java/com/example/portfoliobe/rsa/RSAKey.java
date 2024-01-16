@@ -50,33 +50,53 @@ public class RSAKey {
             throw new RuntimeException(e.getMessage());
         }
     }
-    public void getPrivateKey() throws NoSuchAlgorithmException {
+    public PrivateKey getPrivateKey(String filename) throws NoSuchAlgorithmException {
         try {
-            File privateKeyFile = new File("private.pem");
+            File privateKeyFile = new File(filename);
             byte[] privateBytes = Files.readAllBytes(privateKeyFile.toPath());
 
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-
+            return privateKey;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }
     }
-    public void getPublicKey() throws NoSuchAlgorithmException {
+    public PrivateKey getPrivateKeyFromString(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String privateKeyPEM = key.replace("-----BEGIN PRIVATE KEY-----", "")
+                .replaceAll(System.lineSeparator(), "")
+                .replace("-----END PRIVATE KEY-----", "");
+        byte[] encoded = Base64.getMimeDecoder().decode(privateKeyPEM);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
+        return (PrivateKey) keyFactory.generatePublic(keySpec);
+
+    }
+    public PublicKey getPublicKey(String filename) throws NoSuchAlgorithmException {
         try {
-            File publicKeyFile = new File("public.pem");
+            File publicKeyFile = new File(filename);
             byte[] publicBytes = Files.readAllBytes(publicKeyFile.toPath());
 
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PublicKey publicKey = keyFactory.generatePublic(keySpec);
+            return publicKey;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException(e);
         }
+    }
+    public PublicKey getPublicKeyFromString(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String publicKeyPEM = key.replace("-----BEGIN PRIVATE KEY-----", "")
+                .replaceAll(System.lineSeparator(), "")
+                .replace("-----END PRIVATE KEY-----", "");
+        byte[] encoded = Base64.getMimeDecoder().decode(publicKeyPEM);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+        return keyFactory.generatePublic(keySpec);
     }
 }
